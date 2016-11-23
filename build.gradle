@@ -1,0 +1,64 @@
+group 'com.oneview'
+version '1.0.0'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    sources
+}
+
+dependencies {
+    compile 'org.ajoberstar:grgit:1.7.0'
+    compile "com.amazonaws:aws-java-sdk-core:1.11.51"
+    compile gradleApi()
+    compile localGroovy()
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['plugin']
+    configurations = ['sources']
+    pkg {
+        repo = 'gradle-plugin'
+        name = 'com.oneview:gradle-plugin'
+        userOrg = 'oneviewcommerce'
+        licenses = ['Unlicense']
+        vcsUrl = 'git@github.com:OneviewCommerce/ovc-gradle-plugin.git'
+        version {
+            name = project.version
+        }
+    }
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+artifacts {
+    sources sourcesJar
+}
