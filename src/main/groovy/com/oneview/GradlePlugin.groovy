@@ -39,7 +39,11 @@ class GradlePlugin implements Plugin<Project> {
             scmHash = scmRepo.head().getAbbreviatedId()
             scmBranch = scmRepo.branch.getCurrent().getName()
             isSnapshot = target.version.contains('-')
-            repoSuffix = isSnapshot ? 'snapshots' : 'releases'
+            if (scmBranch.startsWith('release-')) {
+                repoSuffix = 'rcs'
+            } else if (isSnapshot) {
+                repoSuffix = isSnapshot ? 'snapshots' : 'releases'
+            }
             depVersions = isSnapshot ? '+' : target.version
 
         }
@@ -48,27 +52,30 @@ class GradlePlugin implements Plugin<Project> {
             apply plugin: 'maven-publish'
 
             repositories {
-                maven {
-                    if (usingAws) {
-                        url "s3://ovc-gradle-repo/$target.repoSuffix"
-                        credentials(AwsCredentials) {
-                            accessKey awsCredentials.AWSAccessKeyId
-                            secretKey awsCredentials.AWSSecretKey
-                        }
-                    } else {
-                        url "https://s3.amazonaws.com/ovc-gradle-repo/$target.repoSuffix"
-                    }
-                }
 
                 maven {
                     if (usingAws) {
-                        url "s3://mvn-repos/$target.repoSuffix"
+                        url "s3://ovc-gradle-repo/releases"
                         credentials(AwsCredentials) {
                             accessKey awsCredentials.AWSAccessKeyId
                             secretKey awsCredentials.AWSSecretKey
                         }
                     } else {
-                        url "https://s3.amazonaws.com/mvn-repos/$target.repoSuffix"
+                        url "https://s3.amazonaws.com/ovc-gradle-repo/releases"
+                    }
+                }
+
+                if (isSnapshot) {
+                    maven {
+                        if (usingAws) {
+                            url "s3://ovc-gradle-repo/$target.repoSuffix"
+                            credentials(AwsCredentials) {
+                                accessKey awsCredentials.AWSAccessKeyId
+                                secretKey awsCredentials.AWSSecretKey
+                            }
+                        } else {
+                            url "https://s3.amazonaws.com/ovc-gradle-repo/$target.repoSuffix"
+                        }
                     }
                 }
             }
