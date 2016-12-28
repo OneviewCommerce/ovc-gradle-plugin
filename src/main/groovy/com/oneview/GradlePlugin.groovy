@@ -42,7 +42,9 @@ class GradlePlugin implements Plugin<Project> {
             if (scmBranch.startsWith('release-')) {
                 repoSuffix = 'rcs'
             } else if (isSnapshot) {
-                repoSuffix = isSnapshot ? 'snapshots' : 'releases'
+                repoSuffix = 'snapshots'; 
+            } else{
+            	repoSuffix = 'releases';
             }
             depVersions = isSnapshot ? '+' : target.version
 
