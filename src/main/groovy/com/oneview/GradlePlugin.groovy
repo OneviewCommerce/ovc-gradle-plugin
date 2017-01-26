@@ -41,10 +41,12 @@ class GradlePlugin implements Plugin<Project> {
             isSnapshot = target.version.contains('-')
             if (scmBranch.startsWith('release-')) {
                 repoSuffix = 'rcs'
+            } else if (scmBranch.startsWith('hotfix-')) {
+                repoSuffix = 'hotfixes'
             } else if (isSnapshot) {
-                repoSuffix = 'snapshots'; 
+                repoSuffix = 'snapshots';
             } else{
-            	repoSuffix = 'releases';
+                repoSuffix = 'releases';
             }
             depVersions = isSnapshot ? '+' : target.version
 
