@@ -39,7 +39,7 @@ class GradlePlugin implements Plugin<Project> {
             scmHash = scmRepo.head().getAbbreviatedId()
             scmBranch = scmRepo.branch.getCurrent().getName()
             isSnapshot = target.version.contains('-')
-            if (scmBranch.startsWith('release-')) {
+            if (scmBranch.startsWith('release-') || scmBranch.equals('deploy-rc')) {
                 repoSuffix = 'rcs'
             } else if (scmBranch.startsWith('hotfix-')) {
                 repoSuffix = 'hotfixes'
