@@ -43,6 +43,8 @@ class GradlePlugin implements Plugin<Project> {
                 repoSuffix = 'rcs'
             } else if (scmBranch.startsWith('hotfix-')) {
                 repoSuffix = 'hotfixes'
+            } else if (scmBranch.startsWith('sprint-redteam-master')) {
+                repoSuffix = 'releases';
             } else if (isSnapshot) {
                 repoSuffix = 'snapshots';
             } else{
